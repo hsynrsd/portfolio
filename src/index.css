@@ -1,0 +1,12 @@
+:root {
+    --nav-bg-solid: rgba(0, 0, 0, 0.95); /* Fallback for browsers that don't support backdrop-filter */
+  }
+  
+  @supports (padding: max(0px)) {
+    body {
+      padding-left: min(0vmin, env(safe-area-inset-left));
+      padding-right: min(0vmin, env(safe-area-inset-right));
+      padding-top: min(0vmin, env(safe-area-inset-top));
+      padding-bottom: min(0vmin, env(safe-area-inset-bottom));
+    }
+  }

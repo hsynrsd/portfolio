@@ -13,6 +13,10 @@ const ProjectsContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    padding: 0 0.5rem;
+  }
 `;
 
 const ProjectsHeader = styled.div`
@@ -24,35 +28,74 @@ const ProjectsTitle = styled(motion.h2)`
   font-size: 2.5rem;
   color: var(--text-primary);
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 `;
 
 const ProjectsDescription = styled(motion.p)`
   color: var(--text-secondary);
   max-width: 600px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
 `;
 
 const FilterContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: 1rem;
   margin-bottom: 3rem;
-  flex-wrap: wrap;
 `;
 
-const FilterButton = styled.button<{ $active: boolean }>`
-  padding: 0.5rem 1.5rem;
+const FilterSelect = styled.select`
+  padding: 0.75rem 2rem;
   border-radius: 25px;
-  border: none;
-  background: ${props => props.$active ? 'var(--accent-gradient)' : 'var(--card-bg)'};
-  color: ${props => props.$active ? '#fff' : 'var(--text-primary)'};
+  border: 2px solid var(--card-bg);
+  background: var(--card-bg);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s ease;
+  font-size: 1rem;
   font-weight: 500;
-
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  min-width: 150px;
+  text-align: center;
+  
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--accent-color);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px var(--accent-color-transparent);
+  }
+
+  @media (max-width: 768px) {
+    width: 80%;
+    max-width: 300px;
+  }
+`;
+
+const SelectWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: '▼';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+    font-size: 0.8rem;
   }
 `;
 
@@ -61,6 +104,11 @@ const ProjectsGrid = styled(motion.div)`
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
   padding: 1rem 0;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
 `;
 
 const ProjectCard = styled(motion.article)`
@@ -74,16 +122,28 @@ const ProjectCard = styled(motion.article)`
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
+
+  @media (max-width: 768px) {
+    margin: 0 0.5rem;
+  }
 `;
 
 const ProjectImage = styled.img`
   width: 100%;
   height: 200px;
   object-fit: cover;
+
+  @media (max-width: 768px) {
+    height: 150px;
+  }
 `;
 
 const ProjectContent = styled.div`
   padding: 1.5rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 `;
 
 const ProjectTitle = styled.h3`
@@ -92,18 +152,30 @@ const ProjectTitle = styled.h3`
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
 `;
 
 const ProjectMeta = styled.div`
   color: var(--text-muted);
   font-size: 0.875rem;
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const ProjectDescription = styled.p`
   color: var(--text-secondary);
   margin-bottom: 1rem;
   line-height: 1.6;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
 `;
 
 const TagContainer = styled.div`
@@ -119,6 +191,10 @@ const Tag = styled.span`
   padding: 0.25rem 0.75rem;
   border-radius: 15px;
   font-size: 0.875rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const StatusBadge = styled.span<{ $status: 'completed' | 'in-progress' }>`
@@ -156,6 +232,11 @@ const LinkButton = styled.a`
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
   }
 
   i {
@@ -282,17 +363,20 @@ const Projects = () => {
         </ProjectsHeader>
 
         <FilterContainer>
-          {categories.map(category => (
-            <FilterButton
-              key={category}
-              $active={filter === category}
-              onClick={() => setFilter(category)}
+          <SelectWrapper>
+            <FilterSelect
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
             >
-              {category === 'all' 
-                ? t('projects.filter.all')
-                : t(`projects.filter.${category.toLowerCase()}` as TranslationKey)}
-            </FilterButton>
-          ))}
+              {categories.map(category => (
+                <option key={category} value={category}>
+                  {category === 'all' 
+                    ? t('projects.filter.all')
+                    : t(`projects.filter.${category.toLowerCase()}` as TranslationKey)}
+                </option>
+              ))}
+            </FilterSelect>
+          </SelectWrapper>
         </FilterContainer>
 
         <ProjectsGrid
