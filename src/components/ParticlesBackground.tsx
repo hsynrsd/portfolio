@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import Particles from "react-tsparticles";
-import type { Container, Engine } from "tsparticles-engine";
-import { loadFull } from "tsparticles";
+import { Engine } from "tsparticles-engine";
+import { loadSlim } from "tsparticles-slim";
 import styled from '@emotion/styled';
 
 const ParticlesContainer = styled.div`
@@ -16,11 +16,7 @@ const ParticlesContainer = styled.div`
 
 const ParticlesBackground = () => {
   const particlesInit = useCallback(async (engine: Engine) => {
-    await loadFull(engine);
-  }, []);
-
-  const particlesLoaded = useCallback(async (container: Container | undefined) => {
-    console.log("Particles loaded:", container);
+    await loadSlim(engine);
   }, []);
 
   return (
@@ -28,7 +24,6 @@ const ParticlesBackground = () => {
       <Particles
         id="tsparticles"
         init={particlesInit}
-        loaded={particlesLoaded}
         options={{
           background: {
             color: {
@@ -46,7 +41,10 @@ const ParticlesBackground = () => {
                 enable: true,
                 mode: "repulse",
               },
-              resize: true,
+              resize: {
+                enable: true,
+                delay: 0.5
+              },
             },
             modes: {
               push: {
@@ -70,7 +68,6 @@ const ParticlesBackground = () => {
               width: 1,
             },
             move: {
-              direction: "none",
               enable: true,
               outModes: {
                 default: "bounce",
@@ -80,10 +77,6 @@ const ParticlesBackground = () => {
               straight: false,
             },
             number: {
-              density: {
-                enable: true,
-                area: 800,
-              },
               value: 30,
             },
             opacity: {

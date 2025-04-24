@@ -6,11 +6,12 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../translations';
 
 const ContactSection = styled.section`
-  padding: 6rem 2rem;
-  background: #1a1a1a;
+  padding: 6rem 2rem 3rem;
+  background: var(--bg-primary);
+  position: relative;
   
   @media (max-width: 768px) {
-    padding: 4rem 1rem;
+    padding: 4rem 1rem 2rem;
   }
 `;
 

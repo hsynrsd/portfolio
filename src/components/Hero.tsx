@@ -17,10 +17,13 @@ const HeroContainer = styled.section`
   color: var(--text-primary);
   position: relative;
   overflow: hidden;
+  margin: 0;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     padding: var(--spacing-xl) var(--spacing-sm);
-    min-height: auto;
+    min-height: 100vh;
+    height: auto;
   }
 
   &::before {
@@ -377,40 +380,6 @@ const ScrollIndicator = styled(motion.div)`
   }
 `;
 
-const BackToTopButton = styled(motion.button)`
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background: var(--accent-gradient);
-  border: none;
-  color: var(--text-primary);
-  cursor: pointer;
-  z-index: 98;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: translateX(-50%) translateY(-3px);
-  }
-
-  &:active {
-    transform: translateX(-50%) translateY(-1px);
-  }
-
-  @media (max-width: 768px) {
-    bottom: 5rem;
-    width: 40px;
-    height: 40px;
-  }
-`;
-
 const ParticleContainer = styled.div`
   position: absolute;
   top: 0;
@@ -443,7 +412,6 @@ const Hero = () => {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 300], [0, -50]);
   const [isVisible, setIsVisible] = useState(true);
-  const [showBackToTop, setShowBackToTop] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [sparklePoints, setSparklePoints] = useState<Array<{ x: number; y: number }>>([]);
 
@@ -461,19 +429,11 @@ const Hero = () => {
 
     const handleScroll = () => {
       setIsVisible(window.scrollY < 100);
-      setShowBackToTop(window.scrollY > 400);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
 
   const handleTechTagClick = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -652,18 +612,6 @@ const Hero = () => {
         >
           {t('hero.scroll')}
         </ScrollIndicator>
-      )}
-      {showBackToTop && (
-        <BackToTopButton
-          onClick={scrollToTop}
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.5 }}
-          whileHover={{ scale: 1.1 }}
-          aria-label={t('hero.backToTop')}
-        >
-          <i className="fas fa-arrow-up" aria-hidden="true"></i>
-        </BackToTopButton>
       )}
     </HeroContainer>
   );
