@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { motion, AnimatePresence } from 'framer-motion';
 import emailjs from '@emailjs/browser';
@@ -220,18 +220,43 @@ const Contact = () => {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
+  useEffect(() => {
+    // Initialize EmailJS with your public key
+    const initEmailJs = async () => {
+      try {
+        await emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+      } catch (error) {
+        console.error('EmailJS initialization error:', error);
+        setError('Service initialization failed');
+      }
+    };
+    
+    initEmailJs();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
     
+    // Validate environment variables
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      setError('Contact service configuration is missing');
+      setIsSubmitting(false);
+      return;
+    }
+    
     try {
       if (form.current) {
         const result = await emailjs.sendForm(
-          import.meta.env.VITE_EMAILJS_SERVICE_ID,
-          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+          serviceId,
+          templateId,
           form.current,
-          import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+          publicKey
         );
 
         if (result.text === 'OK') {
@@ -240,11 +265,13 @@ const Contact = () => {
             form.current.reset();
           }
           setTimeout(() => setSuccess(false), 5000);
+        } else {
+          throw new Error('Unexpected response from email service');
         }
       }
     } catch (error) {
-      setError('Failed to send message. Please try again later.');
       console.error('Email send error:', error);
+      setError(t('contact.error'));
     } finally {
       setIsSubmitting(false);
     }

@@ -39,6 +39,7 @@ export const translations = {
     'projects.filter.all': 'All',
     'projects.filter.web': 'Web',
     'projects.filter.ai': 'AI',
+    'projects.filter.other': 'Other',
     'projects.filter.mobile': 'Mobile',
     
     // Contact
@@ -120,10 +121,11 @@ export const translations = {
     'projects.filter.all': 'Всички',
     'projects.filter.web': 'Уеб',
     'projects.filter.ai': 'AI',
+    'projects.filter.other': 'Други',
     'projects.filter.mobile': 'Мобилни',
     
     // Contact
-    'contact.title': 'Свържете се с мен!',
+    'contact.title': 'Свържете се със мен!',
     'contact.subtitle': 'Нека създадем нещо невероятно заедно',
     'contact.name': 'Име',
     'contact.email': 'Имейл',

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
@@ -47,55 +47,24 @@ const ProjectsDescription = styled(motion.p)`
 const FilterContainer = styled.div`
   display: flex;
   justify-content: center;
+  gap: 1rem;
   margin-bottom: 3rem;
 `;
 
-const FilterSelect = styled.select`
-  padding: 0.75rem 2rem;
+const FilterButton = styled.button<{ $active: boolean }>`
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: ${props => props.$active ? 'var(--accent-gradient)' : 'var(--card-bg)'};
+  color: ${props => props.$active ? '#fff' : 'var(--text-primary)'};
   border-radius: 25px;
-  border: 2px solid var(--card-bg);
-  background: var(--card-bg);
-  color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 1rem;
   font-weight: 500;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  position: relative;
-  min-width: 150px;
-  text-align: center;
-  
+  transition: all 0.2s ease;
+  border: 2px solid ${props => props.$active ? 'transparent' : 'var(--card-bg)'};
+
   &:hover {
+    background: ${props => props.$active ? 'var(--accent-gradient)' : 'var(--card-bg)'};
     border-color: var(--accent-color);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 2px var(--accent-color-transparent);
-  }
-
-  @media (max-width: 768px) {
-    width: 80%;
-    max-width: 300px;
-  }
-`;
-
-const SelectWrapper = styled.div`
-  position: relative;
-  display: inline-block;
-
-  &::after {
-    content: '▼';
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-secondary);
-    pointer-events: none;
-    font-size: 0.8rem;
   }
 `;
 
@@ -338,7 +307,9 @@ const Projects = () => {
 
   const filteredProjects = filter === 'all' 
     ? projects 
-    : projects.filter(project => project.category === filter);
+    : filter === 'other'
+      ? projects.filter(project => !['AI', 'Web'].includes(project.category))
+      : projects.filter(project => project.category === filter);
 
   const categories = ['all', ...new Set(projects.map(project => project.category))];
 
@@ -363,20 +334,18 @@ const Projects = () => {
         </ProjectsHeader>
 
         <FilterContainer>
-          <SelectWrapper>
-            <FilterSelect
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
+          {['all', 'AI', 'Web', 'Other'].map(category => (
+            <FilterButton
+              key={category}
+              $active={filter === category.toLowerCase()}
+              onClick={() => setFilter(category === 'Other' ? 'other' : category)}
             >
-              {categories.map(category => (
-                <option key={category} value={category}>
-                  {category === 'all' 
-                    ? t('projects.filter.all')
-                    : t(`projects.filter.${category.toLowerCase()}` as TranslationKey)}
-                </option>
-              ))}
-            </FilterSelect>
-          </SelectWrapper>
+              {category === 'all'
+                ? t('projects.filter.all')
+                : t(`projects.filter.${category.toLowerCase()}` as TranslationKey)
+              }
+            </FilterButton>
+          ))}
         </FilterContainer>
 
         <ProjectsGrid
