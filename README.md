@@ -2,6 +2,10 @@
 
 My personal portfolio website built with React, TypeScript, and Vite. Features a modern, responsive design with smooth animations and accessibility in mind.
 
+## 🌐 Live Demo
+
+Visit the site: [hsynrsd.github.io/portfolio](https://hsynrsd.github.io/portfolio)
+
 ## 🚀 Features
 
 - Modern, responsive design
@@ -24,7 +28,7 @@ My personal portfolio website built with React, TypeScript, and Vite. Features a
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/huseyinrashid/portfolio.git
+git clone https://github.com/hsynrsd/portfolio.git
 ```
 
 2. Install dependencies:
@@ -40,6 +44,8 @@ npm run dev
 ## 🚀 Deployment
 
 The site is automatically deployed to GitHub Pages when changes are pushed to the main branch.
+
+Visit the live site at: https://hsynrsd.github.io/portfolio/
 
 To deploy manually:
 
@@ -59,4 +65,4 @@ This project is open source and available under the MIT License.
 
 ## 🤝 Contact
 
-Huseyin Rashid - [LinkedIn](https://linkedin.com/in/huseyinrashid) - contact@huseyinrashid.com
+Huseyin Rashid - [GitHub](https://github.com/hsynrsd)

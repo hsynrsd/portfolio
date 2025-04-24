@@ -1,184 +1,344 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
+import { useTranslation, TranslationKey } from '../translations';
 
-const ProjectsContainer = styled.section`
-  padding: 6rem 2rem;
-  background: #f5f5f5;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    padding: 4rem 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 3rem 1rem;
-  }
+const ProjectsSection = styled.section`
+  padding: 5rem 0;
+  background: var(--bg-primary);
 `;
 
-const ProjectsWrapper = styled.div`
+const ProjectsContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
-
-  @media (max-width: 1200px) {
-    max-width: 90%;
-  }
-
-  @media (max-width: 768px) {
-    max-width: 95%;
-  }
+  padding: 0 1rem;
 `;
 
-const SectionTitle = styled(motion.h2)`
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  font-weight: 800;
-  margin-bottom: 3rem;
+const ProjectsHeader = styled.div`
   text-align: center;
-  background: linear-gradient(45deg, #00ff87, #60efff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  @media (max-width: 768px) {
-    margin-bottom: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    margin-bottom: 1.5rem;
-  }
+  margin-bottom: 3rem;
 `;
 
-const ProjectGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  width: 100%;
-
-  @media (max-width: 992px) {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    max-width: 500px;
-    margin: 0 auto;
-    gap: 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    gap: 1.25rem;
-  }
+const ProjectsTitle = styled(motion.h2)`
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
 `;
 
-const ProjectCard = styled(motion.div)`
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+const ProjectsDescription = styled(motion.p)`
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+`;
+
+const FilterContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   gap: 1rem;
-  height: 100%;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+`;
 
-  @media (max-width: 480px) {
-    padding: 1.5rem;
-    gap: 0.75rem;
+const FilterButton = styled.button<{ $active: boolean }>`
+  padding: 0.5rem 1.5rem;
+  border-radius: 25px;
+  border: none;
+  background: ${props => props.$active ? 'var(--accent-gradient)' : 'var(--card-bg)'};
+  color: ${props => props.$active ? '#fff' : 'var(--text-primary)'};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
+`;
+
+const ProjectsGrid = styled(motion.div)`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 1rem 0;
+`;
+
+const ProjectCard = styled(motion.article)`
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
+`;
 
-  @media (hover: none) {
-    transform: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
+const ProjectImage = styled.img`
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+`;
+
+const ProjectContent = styled.div`
+  padding: 1.5rem;
 `;
 
 const ProjectTitle = styled.h3`
-  font-size: clamp(1.3rem, 2vw, 1.8rem);
-  font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+`;
 
-  span {
-    font-size: 1.5em;
-    line-height: 1;
-  }
-
-  @media (max-width: 480px) {
-    gap: 0.35rem;
-    
-    span {
-      font-size: 1.3em;
-    }
-  }
+const ProjectMeta = styled.div`
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
 `;
 
 const ProjectDescription = styled.p`
-  color: #666;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
   line-height: 1.6;
-  font-size: clamp(0.9rem, 1.1vw, 1.1rem);
-  flex-grow: 1;
+`;
 
-  @media (max-width: 480px) {
-    font-size: 0.95rem;
-    line-height: 1.5;
+const TagContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const Tag = styled.span`
+  background: var(--tag-bg);
+  color: var(--tag-color);
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.875rem;
+`;
+
+const StatusBadge = styled.span<{ $status: 'completed' | 'in-progress' }>`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.875rem;
+  background: ${props => props.$status === 'completed' ? 'var(--success-bg)' : 'var(--warning-bg)'};
+  color: ${props => props.$status === 'completed' ? 'var(--success-color)' : 'var(--warning-color)'};
+`;
+
+const ProjectLinks = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const LinkButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: var(--accent-gradient);
+  color: var(--button-text);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 0.9;
+  }
+
+  i {
+    font-size: 1rem;
   }
 `;
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { 
+    opacity: 0,
+    y: 20
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 12
+    }
+  }
+};
+
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  tags: string[];
+  githubLink: string;
+  demoLink?: string;
+  status: 'completed' | 'in-progress';
+  date: string;
+  category: string;
+}
+
 const Projects = () => {
-  const projects = [
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
+  const [filter, setFilter] = useState<string>('all');
+
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
+  const formatDate = (date: string, lang: string) => {
+    const formattedDate = new Date(date).toLocaleDateString(lang === 'bg' ? 'bg-BG' : 'en-US', {
+      year: 'numeric',
+      month: 'long'
+    });
+    return lang === 'bg' ? capitalizeFirstLetter(formattedDate) : formattedDate;
+  };
+
+  const projects: Project[] = [
     {
-      emoji: "🎯",
+      id: 1,
+      title: "J.A.R.V.I.S. AI Task Assistant",
+      description: "An intelligent task management system powered by machine learning algorithms. Features natural language processing for task understanding and automated task prioritization.",
+      image: "src/assets/project1.png",
+      tags: ["React", "TypeScript", "Python", "AI", "OpenRouter", "Flask", "Git", "GitHub", "DeepSeek"],
+      githubLink: "https://github.com/hsynrsd/jarvis-ai-assistantv2",
+      status: "in-progress",
+      date: "2025-05",
+      category: "AI"
+    },
+    {
+      id: 2,
       title: "Rental Portal",
-      description: "Your one-stop shop for finding the perfect space, whether it's your dream home or the ideal office. Built with a focus on user experience and powerful search capabilities, this platform makes property hunting feel like a breeze. No more endless scrolling through listings that don't match your vibe."
+      description: "A comprehensive property rental management system with features for property listing, tenant matching, and automated rental agreement generation. Implements secure payment processing and real-time chat.",
+      image: "src/assets/project2.png",
+      tags: ["C#", "ASP.NET Core", "MVC", "Razor", "SQL", "Bootstrap", "MsSQL", "Entity Framework", "Git", "GitHub"],
+      githubLink: "https://github.com/hsynrsd/RentalPortal",
+      status: "completed",
+      date: "2025-04",
+      category: "Web"
     },
     {
-      emoji: "🤖",
-      title: "Jarvis AI Assistant",
-      description: "Move over, Siri – there's a new AI in town. Inspired by Iron Man's trusty sidekick, this assistant brings the future to your fingertips. Voice commands, smart responses, and a personality that won't make you want to throw your device out the window. Because who doesn't want their own JARVIS?"
-    },
-    {
-      emoji: "🎬",
+      id: 3,
       title: "Movie Recommendation System",
-      description: "Tired of spending more time picking a movie than actually watching it? This smart system uses matrix factorization to understand your taste better than your best friend. It's like having a movie buddy who actually knows what you'll enjoy – no more disappointing recommendations!"
+      description: "A sophisticated movie recommendation system using matrix factorization to generate personalized movie suggestions for 600 users. Achieved high accuracy in predicting user preferences across a small dataset.",
+      image: "src/assets/project3.png",
+      tags: ["Python", "NumPy", "Pandas", "Scikit-learn", "Matrix Factorization", "Collaborative Filtering", "Data Science", "Machine Learning"],
+      githubLink: "https://github.com/hsynrsd/movie-recommendation",
+      status: "completed",
+      date: "2025-05",
+      category: "AI"
     }
   ];
 
+  const filteredProjects = filter === 'all' 
+    ? projects 
+    : projects.filter(project => project.category === filter);
+
+  const categories = ['all', ...new Set(projects.map(project => project.category))];
+
   return (
-    <ProjectsContainer>
-      <ProjectsWrapper>
-        <SectionTitle
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Featured Projects
-        </SectionTitle>
-        <ProjectGrid>
-          {projects.map((project, index) => (
-            <ProjectCard
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
+    <ProjectsSection id="projects">
+      <ProjectsContainer>
+        <ProjectsHeader>
+          <ProjectsTitle
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {t('projects.title')}
+          </ProjectsTitle>
+          <ProjectsDescription
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            {t('projects.note')}
+          </ProjectsDescription>
+        </ProjectsHeader>
+
+        <FilterContainer>
+          {categories.map(category => (
+            <FilterButton
+              key={category}
+              $active={filter === category}
+              onClick={() => setFilter(category)}
             >
-              <ProjectTitle>
-                <span>{project.emoji}</span>
-                {project.title}
-              </ProjectTitle>
-              <ProjectDescription>{project.description}</ProjectDescription>
+              {category === 'all' 
+                ? t('projects.filter.all')
+                : t(`projects.filter.${category.toLowerCase()}` as TranslationKey)}
+            </FilterButton>
+          ))}
+        </FilterContainer>
+
+        <ProjectsGrid
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {filteredProjects.map(project => (
+            <ProjectCard
+              key={project.id}
+              variants={itemVariants}
+            >
+              <ProjectImage src={project.image} alt={project.title} />
+              <StatusBadge $status={project.status}>
+                {t(`projects.status.${project.status}` as TranslationKey)}
+              </StatusBadge>
+              <ProjectContent>
+                <ProjectTitle>{project.title}</ProjectTitle>
+                <ProjectMeta>
+                  <i className="fas fa-calendar-alt" />{' '}
+                  {formatDate(project.date, language)}
+                </ProjectMeta>
+                <ProjectDescription>{project.description}</ProjectDescription>
+                <TagContainer>
+                  {project.tags.map(tag => (
+                    <Tag key={tag}>{tag}</Tag>
+                  ))}
+                </TagContainer>
+                <ProjectLinks>
+                  <LinkButton href={project.githubLink} target="_blank" rel="noopener noreferrer">
+                    <i className="fab fa-github"></i>
+                    {t('projects.viewCode')}
+                  </LinkButton>
+                  {project.demoLink && (
+                    <LinkButton href={project.demoLink} target="_blank" rel="noopener noreferrer">
+                      <i className="fas fa-external-link-alt"></i>
+                      {t('projects.viewDemo')}
+                    </LinkButton>
+                  )}
+                </ProjectLinks>
+              </ProjectContent>
             </ProjectCard>
           ))}
-        </ProjectGrid>
-      </ProjectsWrapper>
-    </ProjectsContainer>
+        </ProjectsGrid>
+      </ProjectsContainer>
+    </ProjectsSection>
   );
 };
 

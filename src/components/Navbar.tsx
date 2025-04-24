@@ -1,219 +1,199 @@
-import { motion } from 'framer-motion';
-import styled from '@emotion/styled';
 import { useState } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import styled from '@emotion/styled';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useTranslation } from '../translations';
+import LanguageToggle from './LanguageToggle';
 
-const NavContainer = styled(motion.nav)`
+const Nav = styled.nav`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
-  background: rgba(26, 26, 26, 0.9);
-  backdrop-filter: blur(10px);
   padding: 1rem 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-  @media (max-width: 480px) {
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  box-shadow: 0 2px 8px ${props => props.theme === 'dark' ? 
+    'rgba(0, 0, 0, 0.2)' : 
+    'rgba(0, 0, 0, 0.1)'};
+  
+  @media (max-width: 768px) {
     padding: 1rem;
   }
 `;
 
-const NavContent = styled.div`
+const NavContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  @media (max-width: 1200px) {
-    max-width: 90%;
-  }
-
-  @media (max-width: 768px) {
-    max-width: 95%;
-  }
 `;
 
-const Logo = styled(motion.a)`
-  color: white;
-  font-size: 1.8rem;
-  font-weight: 800;
-  text-decoration: none;
-  background: linear-gradient(45deg, #00ff87, #60efff);
+const Logo = styled.a`
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: 1px;
-
+  text-decoration: none;
+  
   @media (max-width: 768px) {
-    font-size: 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
   }
 `;
 
-const NavLinks = styled.div<{ isOpen: boolean }>`
+const DesktopMenu = styled.div`
   display: flex;
   gap: 2rem;
-  align-items: center;
-
-  @media (max-width: 992px) {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 70%;
-    background: rgba(26, 26, 26, 0.95);
-    backdrop-filter: blur(10px);
-    flex-direction: column;
-    justify-content: center;
-    transform: translateX(${props => props.isOpen ? '0' : '100%'});
-    transition: transform 0.3s ease-in-out;
-    padding: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    width: 85%;
+  
+  @media (max-width: 768px) {
+    display: none;
   }
 `;
 
-const NavLink = styled(motion.a)`
-  color: white;
-  text-decoration: none;
-  font-size: 1.1rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  position: relative;
-
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(45deg, #00ff87, #60efff);
-    transition: width 0.3s ease;
-  }
-
-  &:hover {
-    color: #00ff87;
-    &:after {
-      width: 100%;
-    }
-  }
-
-  @media (max-width: 1200px) {
-    font-size: 1rem;
-  }
-
-  @media (max-width: 992px) {
-    font-size: 1.5rem;
-    margin: 1rem 0;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.3rem;
-  }
-`;
-
-const MenuButton = styled.button`
+const MobileMenuButton = styled.button`
   display: none;
   background: none;
   border: none;
-  color: white;
+  color: var(--text-primary);
   font-size: 1.5rem;
   cursor: pointer;
-  z-index: 1001;
   padding: 0.5rem;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: scale(1.1);
-  }
-
-  @media (max-width: 992px) {
+  
+  @media (max-width: 768px) {
     display: block;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.3rem;
   }
 `;
 
-const Overlay = styled.div<{ isOpen: boolean }>`
+const MobileMenu = styled(motion.div)`
   display: none;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  opacity: ${props => props.isOpen ? 1 : 0};
-  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
-  transition: all 0.3s ease;
-
-  @media (max-width: 992px) {
-    display: block;
+  background: var(--nav-bg);
+  padding: 2rem;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
   }
 `;
 
-const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const NavLink = styled.a<{ $isMobile?: boolean }>`
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: ${props => props.$isMobile ? '1.5rem' : '1rem'};
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    color: ${props => props.theme === 'dark' ? '#00ff87' : '#00b85f'};
+  }
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMenuOpen(false);
-    }
-  };
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-gradient);
+    transition: width 0.3s ease;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+`;
+
+const NavActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const Navbar = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme } = useTheme();
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
+
+  const menuItems = [
+    { href: '#', text: t('nav.home') },
+    { href: '#skills', text: t('nav.skills') },
+    { href: '#projects', text: t('nav.projects') },
+    { href: '#contact', text: t('nav.contact') },
+  ];
 
   return (
-    <>
-      <NavContainer
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <NavContent>
-          <Logo href="#" onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }}>
-            HR
-          </Logo>
-          <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <FaTimes /> : <FaBars />}
-          </MenuButton>
-          <NavLinks isOpen={isMenuOpen}>
-            <NavLink
-              href="#"
-              onClick={(e) => { e.preventDefault(); scrollToSection('projects'); }}
-              whileHover={{ scale: 1.1 }}
-            >
-              Projects
+    <Nav theme={theme}>
+      <NavContainer>
+        <Logo href="#">HR</Logo>
+        <DesktopMenu>
+          {menuItems.map((item) => (
+            <NavLink key={item.href} href={item.href} theme={theme}>
+              {item.text}
             </NavLink>
-            <NavLink
-              href="#"
-              onClick={(e) => { e.preventDefault(); scrollToSection('skills'); }}
-              whileHover={{ scale: 1.1 }}
-            >
-              Skills
-            </NavLink>
-            <NavLink
-              href="#"
-              onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}
-              whileHover={{ scale: 1.1 }}
-            >
-              Contact
-            </NavLink>
-          </NavLinks>
-        </NavContent>
+          ))}
+        </DesktopMenu>
+        <NavActions>
+          <LanguageToggle />
+          <MobileMenuButton onClick={() => setIsMobileMenuOpen(true)}>
+            <i className="fas fa-bars"></i>
+          </MobileMenuButton>
+        </NavActions>
       </NavContainer>
-      <Overlay isOpen={isMenuOpen} onClick={() => setIsMenuOpen(false)} />
-    </>
+
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <MobileMenu
+            theme={theme}
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.3 }}
+          >
+            <CloseButton onClick={() => setIsMobileMenuOpen(false)}>
+              <i className="fas fa-times"></i>
+            </CloseButton>
+            {menuItems.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href}
+                theme={theme}
+                $isMobile
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.text}
+              </NavLink>
+            ))}
+            <LanguageToggle />
+          </MobileMenu>
+        )}
+      </AnimatePresence>
+    </Nav>
   );
 };
 
-export default Navbar; 
+export default Navbar;
