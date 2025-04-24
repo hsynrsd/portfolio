@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
@@ -173,8 +173,12 @@ const StatusBadge = styled.span<{ $status: 'completed' | 'in-progress' }>`
   padding: 0.25rem 0.75rem;
   border-radius: 15px;
   font-size: 0.875rem;
-  background: ${props => props.$status === 'completed' ? 'var(--success-bg)' : 'var(--warning-bg)'};
-  color: ${props => props.$status === 'completed' ? 'var(--success-color)' : 'var(--warning-color)'};
+  background: ${props => props.$status === 'completed' ? 'rgba(0, 255, 135, 0.15)' : 'rgba(255, 170, 0, 0.15)'};
+  color: ${props => props.$status === 'completed' ? '#00ff87' : '#ffaa00'};
+  border: 1px solid ${props => props.$status === 'completed' ? '#00ff87' : '#ffaa00'};
+  backdrop-filter: blur(4px);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 `;
 
 const ProjectLinks = styled.div`
@@ -310,8 +314,6 @@ const Projects = () => {
     : filter === 'other'
       ? projects.filter(project => !['AI', 'Web'].includes(project.category))
       : projects.filter(project => project.category === filter);
-
-  const categories = ['all', ...new Set(projects.map(project => project.category))];
 
   return (
     <ProjectsSection id="projects">
