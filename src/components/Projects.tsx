@@ -3,6 +3,9 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation, TranslationKey } from '../translations';
+import project1 from '../../public/assets/project1.png';
+import project2 from '../../public/assets/project2.png';
+import project3 from '../../public/assets/project3.png';
 
 const ProjectsSection = styled.section`
   padding: 5rem 0;
@@ -278,7 +281,7 @@ const Projects = () => {
       id: 1,
       title: "J.A.R.V.I.S. AI Task Assistant",
       description: "An intelligent task management system powered by machine learning algorithms. Features natural language processing for task understanding and automated task prioritization.",
-      image: "src/assets/project1.png",
+      image: project1,
       tags: ["React", "TypeScript", "Python", "AI", "OpenRouter", "Flask", "Git", "GitHub", "DeepSeek"],
       githubLink: "https://github.com/hsynrsd/jarvis-ai-assistantv2",
       status: "in-progress",
@@ -289,7 +292,7 @@ const Projects = () => {
       id: 2,
       title: "Rental Portal",
       description: "A comprehensive property rental management system with features for property listing, tenant matching, and automated rental agreement generation. Implements secure payment processing and real-time chat.",
-      image: "src/assets/project2.png",
+      image: project2,
       tags: ["C#", "ASP.NET Core", "MVC", "Razor", "SQL", "Bootstrap", "MsSQL", "Entity Framework", "Git", "GitHub"],
       githubLink: "https://github.com/hsynrsd/RentalPortal",
       status: "completed",
@@ -300,7 +303,7 @@ const Projects = () => {
       id: 3,
       title: "Movie Recommendation System",
       description: "A sophisticated movie recommendation system using matrix factorization to generate personalized movie suggestions for 600 users. Achieved high accuracy in predicting user preferences across a small dataset.",
-      image: "src/assets/project3.png",
+      image: project3,
       tags: ["Python", "NumPy", "Pandas", "Scikit-learn", "Matrix Factorization", "Collaborative Filtering", "Data Science", "Machine Learning"],
       githubLink: "https://github.com/hsynrsd/movie-recommendation",
       status: "completed",

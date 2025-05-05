@@ -6,6 +6,7 @@ import MatrixRain from './effects/MatrixRain';
 import Sparkles from './effects/Sparkles';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation, TranslationKey } from '../translations';
+import profile from '../../public/assets/profile.png';
 
 const HeroContainer = styled.section`
   min-height: 100vh;
@@ -580,7 +581,7 @@ const Hero = () => {
           transition={{ type: "spring", stiffness: 300 }}
         >
           <ProfileImage
-            src="src/assets/profile.png"
+            src={profile}
             alt="Huseyin Rashid - Software Developer"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
