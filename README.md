@@ -28,7 +28,7 @@ Visit the site: [hsynrsd.github.io/portfolio](https://hsynrsd.github.io/portfoli
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/huseyinrashid/portfolio.git
+git clone https://github.com/hsynrsd/portfolio.git
 ```
 
 2. Install dependencies:
@@ -63,4 +63,4 @@ This project is open source and available under the MIT License.
 
 ## 🤝 Contact
 
-Huseyin Rashid - [LinkedIn](https://linkedin.com/in/huseyinrashid) - contact@huseyinrashid.com
+Huseyin Rashid - [LinkedIn](https://www.linkedin.com/in/huseyin-rashid-356025349/) - contact@huseyinrashid.com
